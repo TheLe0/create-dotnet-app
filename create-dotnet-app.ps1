@@ -15,7 +15,13 @@ New-Item -ItemType Directory -Path $testDir
 
 dotnet new sln -n $solutionName
 
-dotnet sln add "$srcDir"
-dotnet sln add "$testDir"
+$fixtureProjectDir = Join-Path -Path $testDir -ChildPath "$solutionName.Fixture"
+$unitTestProjectDir = Join-Path -Path $testDir -ChildPath "$solutionName.UnitTest"
 
-Write-Host "Solution and directories created successfully!"
+dotnet new classlib -o $fixtureProjectDir --name "$solutionName.Fixture"
+dotnet new xunit -o $unitTestProjectDir --name "$solutionName.UnitTest"
+
+dotnet sln add "$fixtureProjectDir/$solutionName.Fixture.csproj"
+dotnet sln add "$unitTestProjectDir/$solutionName.UnitTest.csproj"
+
+Write-Host "Solution and projects created successfully!"
