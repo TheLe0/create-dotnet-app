@@ -8,6 +8,23 @@ Features:
 - [X] Compatibility with multiple .NET versions
 - [X] Support for various presentation projects (API, MVC, Console, and Service Worker)
 
+## Usage
+
+To create a new .NET solution using the Clean Architecture scaffolder, use the create-dotnet-app command in your terminal. Below are the arguments you can use with this command:
+
+### Command Syntax
+
+```bash
+create-dotnet-app [-solutionName <name>] [-dotnetVersion <version>] [-language <lang>] [-presentationType <type>]
+```
+
+### Arguments
+
+* <b>-solutionName</b> <name> (Required): Specifies the name of the solution to be created. This is the only required argument.
+* <b>-dotnetVersion</b> <version> (Optional): Specifies the .NET version to use for the solution. Default is "net8.0". Supported values: "net6.0", "net7.0", "net8.0"
+* <b>-language</b> <lang> (Optional): Specifies the programming language for the solution. Default is "C#". Supported values: "C#", "F#"
+* <b>-presentationType</b> <type> (Optional): Specifies the type of presentation project to create. Default is "api". Supported values: "api", "mvc", "console", "serviceworker"
+
 ## Setup
 
 To set up in your CLI, first clone this repository to a location on your operating system. Then, run the commands above to configure the alias.
