@@ -1,0 +1,40 @@
+name: Windows CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x.x'
+
+    - name: Install PowerShell Core
+      run: |
+        Invoke-WebRequest -Uri https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/PowerShell-7.3.4-win-x64.msi -OutFile PowerShell.msi
+        Start-Process msiexec.exe -ArgumentList "/i PowerShell.msi /quiet /norestart" -NoNewWindow -Wait
+
+    - name: Set up alias
+      run: |
+        echo "function create-dotnet-app { param ([string]\$solutionName, [string]\$dotnetVersion = 'net8.0', [string]\$language = 'C#', [string]\$presentationType = 'api') & './create-dotnet-app.ps1' -solutionName \$solutionName -dotnetVersion \$dotnetVersion -language \$language -presentationType \$presentationType }" >> $PROFILE
+        . $PROFILE
+    
+    - name: Run create-dotnet-app
+      run: |
+        create-dotnet-app -solutionName "TestSolution" -dotnetVersion "net8.0" -language "C#" -presentationType "mvc"
+
+    - name: Run tests
+      run: |
+        dotnet test ./test/TestSolution.UnitTest/TestSolution.UnitTest.csproj
