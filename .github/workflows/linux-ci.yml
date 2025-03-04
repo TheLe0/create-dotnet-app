@@ -1,4 +1,4 @@
-name: .NET CI
+name: Linux CI
 
 on:
   push:
