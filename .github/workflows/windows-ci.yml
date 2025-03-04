@@ -26,13 +26,21 @@ jobs:
         Invoke-WebRequest -Uri https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/PowerShell-7.3.4-win-x64.msi -OutFile PowerShell.msi
         Start-Process msiexec.exe -ArgumentList "/i PowerShell.msi /quiet /norestart" -NoNewWindow -Wait
 
-    - name: Set up alias
+    - name: Run create-dotnet-app script
+      shell: pwsh
       run: |
-        echo "function create-dotnet-app { param ([string]\$solutionName, [string]\$dotnetVersion = 'net8.0', [string]\$language = 'C#', [string]\$presentationType = 'api') & './create-dotnet-app.ps1' -solutionName \$solutionName -dotnetVersion \$dotnetVersion -language \$language -presentationType \$presentationType }" >> $PROFILE
-        . $PROFILE
-    
-    - name: Run create-dotnet-app
-      run: |
+        # Define the alias within the same script execution
+        function create-dotnet-app {
+            param (
+                [string]$solutionName,
+                [string]$dotnetVersion = "net8.0",
+                [string]$language = "C#",
+                [string]$presentationType = "api"
+            )
+            & './create-dotnet-app.ps1' -solutionName $solutionName -dotnetVersion $dotnetVersion -language $language -presentationType $presentationType
+        }
+
+        # Run the alias function
         create-dotnet-app -solutionName "TestSolution" -dotnetVersion "net8.0" -language "C#" -presentationType "mvc"
 
     - name: Run tests
