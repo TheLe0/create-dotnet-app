@@ -1,4 +1,4 @@
-name: .NET CI
+name: Linux CI
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: '8.x.x'
 
-    - name: Install PowerShell
+    - name: Install PowerShell Core
       run: |
         sudo apt-get update
         sudo apt-get install -y wget apt-transport-https software-properties-common
@@ -30,12 +30,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y powershell
 
-    - name: Run create-dotnet-app script
+    - name: Set up alias in .bashrc and run script
       shell: bash
       run: |
-        # Define the alias within the same script execution
-        alias create-dotnet-app='pwsh -File ./create-dotnet-app.ps1'
-
+        echo "alias create-dotnet-app='pwsh -File ./CreateSolution.ps1'" >> ~/.bashrc
+        source ~/.bashrc
         create-dotnet-app -solutionName "TestSolution" -dotnetVersion "net8.0" -language "C#" -presentationType "mvc"
 
     - name: Run tests
