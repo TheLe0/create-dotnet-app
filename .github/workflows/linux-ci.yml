@@ -1,0 +1,44 @@
+name: Linux CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x.x'
+
+    - name: Install PowerShell
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget apt-transport-https software-properties-common
+        wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+        sudo dpkg -i packages-microsoft-prod.deb
+        sudo apt-get update
+        sudo apt-get install -y powershell
+
+    - name: Set up alias in .bashrc
+      run: |
+        echo "alias create-dotnet-app='pwsh -File ./create-dotnet-app.ps1'" >> ~/.bashrc
+        source ~/.bashrc
+
+    - name: Run create-dotnet-app script
+      run: |
+        create-dotnet-app -solutionName "TestSolution" -dotnetVersion "net8.0" -language "C#" -presentationType "mvc"
+
+    - name: Run tests
+      run: |
+        dotnet test ./test/TestSolution.UnitTest/TestSolution.UnitTest.csproj
